@@ -26,8 +26,6 @@ public interface CelebService {
 
 	public String saveTournament(MultipartHttpServletRequest request, String tournamenttype);
 
-	public String saveProfile(MultipartHttpServletRequest request, Integer userId);
-
 	public String saveSchdeule(MultipartHttpServletRequest request, String content);
 
 	public String dietSave(MultipartHttpServletRequest request, String content);
@@ -36,5 +34,6 @@ public interface CelebService {
 
 	public String quizSave(QuizRequest request);
 
+	public String liveMatch(MultipartHttpServletRequest request);
 
 }

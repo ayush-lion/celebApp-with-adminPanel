@@ -20,20 +20,12 @@ public class Quizgame {
 	private String optiona;
 	
 	private String optionb;
-	
+
 	private String optionc;
-	
+
 	private String optiond;
 	
 	private String right;
-
-	public String getRight() {
-		return right;
-	}
-
-	public void setRight(String right) {
-		this.right = right;
-	}
 
 	public Integer getQuizId() {
 		return quizId;
@@ -81,5 +73,13 @@ public class Quizgame {
 
 	public void setOptiond(String optiond) {
 		this.optiond = optiond;
-	}	
+	}
+
+	public String getRight() {
+		return right;
+	}
+
+	public void setRight(String right) {
+		this.right = right;
+	}
 }

@@ -10,6 +10,4 @@ public interface ProfilePicRepository extends JpaRepository<ProfilePic, String> 
 
 	ProfilePic findByUserId(Integer userId);
 
-	ProfilePic findByProfilePicId(Integer profilepicId);
-
 }

@@ -164,6 +164,4 @@ public class Stats {
 	public void setBbf(String bbf) {
 		this.bbf = bbf;
 	}
-	
-	
 }

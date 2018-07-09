@@ -1,4 +1,6 @@
 package com.ctn.celebApp.controller;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.ctn.celebApp.celebrequest.CelebCreateRequest;
@@ -54,7 +57,7 @@ public class CelebController {
 	
 	@RequestMapping(value = "/uploadPost", method = RequestMethod.POST)
 	public String save(MultipartHttpServletRequest request) throws Exception {
-		
+		System.out.println("============================");
 	return celebService.save(request);
 	}
 	
@@ -82,14 +85,6 @@ public class CelebController {
 	return celebService.statsSave(request);	
 	}
 	
-	/*********************************************** ProfilePic ****************************************/
-	
-	@RequestMapping(value = "/uploadProfilePic" ,  method = RequestMethod.POST)
-	public String saveProfile(MultipartHttpServletRequest request,Integer userId) {
-		
-	return celebService.saveProfile(request,userId);
-	}
-	
 	/*********************************************** FitnessSchdule ****************************************/
 	
 	@RequestMapping(value = "/uploadSchedule" ,   method = RequestMethod.POST)
@@ -109,8 +104,13 @@ public class CelebController {
 	/************************************************ Quiz *************************************************/
 	
 	@RequestMapping(value = "/Quiz" ,   method = RequestMethod.POST)
-	public String quizSave(QuizRequest request) {
-		
+	public String quizSave(@RequestBody QuizRequest request) {
 	return celebService.quizSave(request);	
+	}	
+	
+	@RequestMapping(value = "/LiveMatch" ,   method = RequestMethod.POST)
+	public String liveMatch(MultipartHttpServletRequest request) {
+
+	return celebService.liveMatch(request);
 	}	
 }

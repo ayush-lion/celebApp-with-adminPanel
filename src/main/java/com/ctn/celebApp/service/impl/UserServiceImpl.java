@@ -1,21 +1,28 @@
 package com.ctn.celebApp.service.impl;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.ctn.celebApp.dao.AboutMeRepository;
 import com.ctn.celebApp.dao.CelebRepository;
 import com.ctn.celebApp.dao.CollaborationRepository;
 import com.ctn.celebApp.dao.FanBoardRepository;
 import com.ctn.celebApp.dao.FeedBackRepository;
 import com.ctn.celebApp.dao.FitnessRoutineRepository;
+import com.ctn.celebApp.dao.FixuresRepository;
 import com.ctn.celebApp.dao.LikeStatusAllFeedRepository;
+import com.ctn.celebApp.dao.LiveMatchRepository;
 import com.ctn.celebApp.dao.MediaCaptionRepository;
 import com.ctn.celebApp.dao.MyDietRepository;
 import com.ctn.celebApp.dao.NewsFeedLikeRepository;
@@ -37,6 +44,8 @@ import com.ctn.celebApp.entity.Collaboration;
 import com.ctn.celebApp.entity.Fanboard;
 import com.ctn.celebApp.entity.FeedBack;
 import com.ctn.celebApp.entity.FitnessRoutine;
+import com.ctn.celebApp.entity.Fixures;
+import com.ctn.celebApp.entity.LiveMatch;
 import com.ctn.celebApp.entity.MediaCaption;
 import com.ctn.celebApp.entity.MyDiet;
 import com.ctn.celebApp.entity.MyProfile;
@@ -118,6 +127,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	SubscribeRepository subscribeRepo;
+	
+	@Autowired
+	LiveMatchRepository livematchRepo;
 
 	@Autowired
 	FitnessRoutineRepository fitnessRoutineRepo;
@@ -133,6 +145,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	StatsRepository statsRepo;
+	
+	@Autowired
+	FixuresRepository fixureRepo;
 
 	@Autowired
 	MyDietRepository myDietRepo;
@@ -148,6 +163,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	QuizAnswerRepository quizAnswerRepo;
+	
+	@Autowired
+	ProfilePicRepository profilePicRepo;
 	
 	@Override
 	public UserDetailsResponse create(UserCreateRequest userCreateRequest) {
@@ -172,79 +190,6 @@ public class UserServiceImpl implements UserService {
 			response.setMessage("Details Saved Sucessfully!!");
 			return response;
 		}
-	}
-	
-	@Override
-	public List<PostUrl> savePostUrl(PostUrlRequest postUrlRequest) {
-		List<PostUrl> requestList = new ArrayList<>();
-		final List<PostUrl> postUrl = postUrlRepo.findByUserId(postUrlRequest.getUserId());
-		List<String> postlist = postUrlRequest.getPostUrl();
-		List<String> urlList = new ArrayList<>();
-
-		if (postUrl.size() == 0) {
-			for (String string : postlist) {
-				PostUrl newpostUrl = new PostUrl();
-				newpostUrl.setPostUrl(string);
-				newpostUrl.setUserId(postUrlRequest.getUserId());
-				postUrlRepo.save(newpostUrl);
-				requestList.add(newpostUrl);
-			}
-		} else {
-			for (PostUrl string : postUrl) {
-				urlList.add(string.getPostUrl());
-			}
-			for (String posturls : postlist) {
-				if (urlList.contains(posturls)) {
-					System.out.println("already available");
-				} else {
-					PostUrl newpostUrl = new PostUrl();
-					newpostUrl.setPostUrl(posturls);
-					newpostUrl.setUserId(postUrlRequest.getUserId());
-					postUrlRepo.save(newpostUrl);
-					requestList.add(newpostUrl);
-				}
-			}
-		}
-		 List<PostUrl> postUrl2 = postUrlRepo.findByUserId(postUrlRequest.getUserId());
-		 Collections.reverse(postUrl2);
-		return  postUrl2;	
-	}
-	
-	@Override
-	public List<PostVideos> saveVideo(VideoUrlRequest videoUrlRequest) {
-		List<PostVideos> requestList = new ArrayList<>();
-		final List<PostVideos> postUrl = postVideoRepo.findByUserId(videoUrlRequest.getUserId());
-		List<String> postlist = videoUrlRequest.getVideo();
-		List<String> urlList = new ArrayList<>();
-		if (postUrl.size() == 0) {
-			for (String string : postlist) {
-				PostVideos newpostUrl = new PostVideos();
-				newpostUrl.setVideoUrl(string);
-				newpostUrl.setUserId(videoUrlRequest.getUserId());
-				postVideoRepo.save(newpostUrl);
-				requestList.add(newpostUrl);				
-			}
-		} else {
-			for (PostVideos string : postUrl) {
-				urlList.add(string.getVideoUrl());
-			}
-			for (String posturls : postlist) {
-				if (urlList.contains(posturls)) {
-					System.out.println("already available");
-				} else {
-					PostVideos newpostUrl = new PostVideos();
-					newpostUrl.setVideoUrl(posturls);
-					newpostUrl.setUserId(videoUrlRequest.getUserId());
-
-					postVideoRepo.save(newpostUrl);
-
-					requestList.add(newpostUrl);
-				}
-			}
-		}
-		List<PostVideos> postUrl2 = postVideoRepo.findByUserId(videoUrlRequest.getUserId());
-		Collections.reverse(postUrl2);
-		return  postUrl2;		
 	}
 
 	@Override
@@ -360,50 +305,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<AboutMe> aboutme() {
-
-		return (List<AboutMe>) aboutMeRepo.findAll();
-	}
-
-	@Override
-	public List<MyProfile> myprofile() {
-		List<CelebDetails> celeblist = (List<CelebDetails>) celebRepo.findAll();
-		List<MyProfile> myprofile = new ArrayList<>();
-		MyProfile profile = new MyProfile();
-		for (CelebDetails celebDetails : celeblist) {
-			profile.setAge(celebDetails.getAge());
-			profile.setBattingstyle(celebDetails.getBattingstyle());
-			profile.setBowlingstyle(celebDetails.getBowlingstyle());
-			profile.setCelebid(celebDetails.getCelebid());
-			profile.setCelebname(celebDetails.getCelebname());
-			profile.setHeight(celebDetails.getHeight());
-			profile.setMajorteams(celebDetails.getMajorteams());
-			profile.setMatchplayed(celebDetails.getMatchplayed());
-			profile.setOccupation(celebDetails.getOccupation());
-			profile.setProfile(celebDetails.getProfile());
-			profile.setRun(celebDetails.getRun());
-			profile.setWicket(celebDetails.getWicket());
-			myprofile.add(profile);
-		}
-		return myprofile;
-	}
-	
-	@Override
-	public List<Fanboard> findAllFan() {
-	return (List<Fanboard>) fanBoardRepo.findAll();
-	}
-
-	@Override
-	public List<Collaboration> collaborations() {
-	return (List<Collaboration>) collaborationRepo.findAll();
-	}
-
-	@Override
-	public List<FitnessRoutine> fitnessRoutine() {
-	return (List<FitnessRoutine>) fitnessRoutineRepo.findAll();
-	}
-
-	@Override
 	public List<MyDiet> myDiet() {
 	return (List<MyDiet>) myDietRepo.findAll();
 	}
@@ -412,11 +313,6 @@ public class UserServiceImpl implements UserService {
 	public List<MediaCaption> mediaCaption() {
 	
 	return (List<MediaCaption>)mediaCaptionRepo.findAll();
-	}
-
-	@Override
-	public List<FeedBack> findFeedback() {	
-	return (List<FeedBack>) feedBackRepo.findAll();
 	}
 
 	@Override
@@ -435,7 +331,13 @@ public class UserServiceImpl implements UserService {
 			userCommentResponse.setUserId(userdetail.getUserId());
 			userCommentResponse.setUserName(userdetail.getUserName());
 			ProfilePic profilePic = profileRepo.findByUserId(userCommentDetails.getUserId());
+			if(profilePic == null) {
+				userCommentResponse.setProfilePic("null");
+			}
+			else 
+			{
 			userCommentResponse.setProfilePic(profilePic.getProfilePic());
+			}
 		}
 		userCommentResponse.setNewsFeedId(userCommentDetails.getNewsFeedId());
 		userCommentResponse.setComment(userCommentDetails.getComment());
@@ -497,11 +399,13 @@ public class UserServiceImpl implements UserService {
 		}	
 		
 		ProfilePic profileDetails = profileRepo.findByUserId(commentRequest.getUserId());
-		if((profileDetails.getUserId()).equals(commentRequest.getUserId()))
-		{
+		try {
+			if((profileDetails.getUserId()).equals(commentRequest.getUserId()))
+			{
 			response.setProfilePic(profileDetails.getProfilePic());
-		}	
-				
+			}
+		}catch(Exception e) {		
+	   }				
 		response.setNewsFeedId(userCommentDetails.getNewsFeedId());
 		response.setUserId(commentRequest.getUserId());
 		response.setComment(commentRequest.getComment());
@@ -594,106 +498,62 @@ public class UserServiceImpl implements UserService {
 		
 	return (List<Quizgame>) quizRepo.findAll() ;
 	}
+	
+	@Override
+	public String saveProfile(MultipartHttpServletRequest request, Integer userId) {
+		String url = null;
+		Iterator<String> itrator = request.getFileNames();
+		MultipartFile multiFile = request.getFile(itrator.next());
+		try {
+			String fileName = multiFile.getOriginalFilename();
+			String extension = multiFile.getOriginalFilename().split("\\.")[1];
+			String path = request.getServletContext().getRealPath("/");
+			String serverPath = new File(".").getCanonicalPath();
+			Properties prop = new Properties();
+			String savedLocation =System.getProperty("user.dir")+"/src/main/webapp/views/images/Profile_Pic/";
+			Date date = new Date();
+			String name = date.getTime() + "NDA_" + "." + extension;
+			byte[] bytes = multiFile.getBytes();
+			File directory = new File(savedLocation);
+			directory.mkdirs();
+			File file = new File(directory.getAbsolutePath() + System.getProperty("file.separator") + name);		
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+			stream.write(bytes);
+			String contentType = multiFile.getContentType();
+			url ="http://"+request.getServerName()+":"+request.getLocalPort()+"/views/images/Profile_Pic/"+file.getName();
+			ProfilePic profilePic = profilePicRepo.findByUserId(userId);
+			if(profilePic == null) {
+				ProfilePic pic = new ProfilePic();
+				pic.setUserId(userId);
+				pic.setProfilePic(url);
+				profilePicRepo.save(pic);
+			} else if(profilePic.getUserId().equals(userId)){
+				profilePic.setUserId(userId);
+				profilePic.setProfilePic(url);
+				profilePicRepo.save(profilePic);
+			} else
+				{
+				ProfilePic pic = new ProfilePic();
+				pic.setUserId(userId);
+				pic.setProfilePic(url);
+				profilePicRepo.save(pic);
+				}
+			stream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return url;	
+	}
 
 	@Override
-	public ResponseEntity<?> setProfilePic(Integer userId, MultipartFile file) {
+	public List<Fixures> findAllFixures() {
 		
-	return null;
+	return (List<Fixures>)fixureRepo.findAll();
 	}
 
 	@Override
-	public StatusResponse setOtherProfilePic(Integer profilepicId) {
-	
-	return null;
+	public List<LiveMatch> findAllLiveMatch() {
+		
+	return (List<LiveMatch>)livematchRepo.findAll();
 	}
-
-	/*@Override
-	public ResponseEntity<?> setProfilePic(Integer userId, MultipartFile file) {
-		User u = userRepo.findByUserId(userId);
-
-		if (u == null) {
-			StatusResponse sR = new StatusResponse();
-			sR.setStatus(Status.FAILED);
-			sR.setMessage("UserId doesn't exits !!");
-			return new ResponseEntity<StatusResponse>(sR, HttpStatus.NOT_FOUND);
-		}
-
-		String fileName = null;
-		ProfilePic pp = new ProfilePic();
-		String basePath = "src/main/webapp/views/images/Profile_Pic/";
-
-		File dir1 = new File("/src/main/webapp/views/images/Profile_Pic/" + userId);
-
-		// attempt to create the directory here
-
-		dir1.setExecutable(true);
-		dir1.setWritable(true);
-		dir1.setReadable(true);
-
-		List<ProfilePic> profile = profileRepo.findByUserId(userId);
-		for (ProfilePic profilePic : profile) {
-			profilePic.setStatus("Inactive");
-			profileRepo.save(profilePic);
-		}
-		if (!file.isEmpty()) {
-			try {
-				String f = file.getOriginalFilename();
-				int i = f.lastIndexOf('.');
-				String s = f.substring(i);
-				Date d = new Date();
-				long n = d.getTime();
-				fileName = n + s;
-				byte[] bytes = file.getBytes();
-
-				BufferedOutputStream buffStream = new BufferedOutputStream(
-						new FileOutputStream(new File(basePath + fileName)));
-				buffStream.write(bytes);
-				buffStream.close();
-				pp.setUserId(userId);
-				pp.setProfilePic(fileName);
-				pp.setStatus("Active");
-				profileRepo.save(pp);
-				ProfilePicResponse pPR = new ProfilePicResponse();
-				pPR.setProfilePicId(profileRepo.save(pp).getProfilePicId());
-				pPR.setProfilePic(fileName);
-				pPR.setStatus(Status.SUCCESS);
-				pPR.setMessage("You have uploaded Successfully!!");
-				return new ResponseEntity<ProfilePicResponse>(pPR, HttpStatus.OK);
-
-			} catch (Exception e) {
-				StatusResponse sR = new StatusResponse();
-				sR.setStatus(Status.FAILED);
-				sR.setMessage("You failed to upload " + fileName + ": " + e.getMessage());
-				return new ResponseEntity<StatusResponse>(sR, HttpStatus.NOT_FOUND);
-			}
-		} else {
-			StatusResponse sR = new StatusResponse();
-			sR.setStatus(Status.FAILED);
-			sR.setMessage("Unable to upload. File is empty.");
-			return new ResponseEntity<StatusResponse>(sR, HttpStatus.NO_CONTENT);
-		}
-	}*/
-	
-	/*@Override
-	public StatusResponse setOtherProfilePic(Integer profilepicId) {
-		ProfilePic p = profileRepo.findByProfilePicId(profilepicId);
-		if (p == null) {
-			StatusResponse sR = new StatusResponse();
-			sR.setStatus(Status.FAILED);
-			sR.setMessage("The ProfilePicId doesn't Exist");
-			return sR;
-		}
-		List<ProfilePic> pList = profileRepo.findByUserId(p.getUserId());
-		for (ProfilePic profilePic : pList) {
-			profilePic.setStatus("Inactive");
-			profileRepo.save(profilePic);
-		}
-		p.setStatus("Active");
-		profileRepo.save(p);
-
-		StatusResponse sR = new StatusResponse();
-		sR.setStatus(Status.SUCCESS);
-		sR.setMessage("The Profile Pic Set Successfully!!");
-		return sR;
-	}*/
 }

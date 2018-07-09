@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.ctn.celebApp.entity.AboutMe;
 import com.ctn.celebApp.entity.Collaboration;
 import com.ctn.celebApp.entity.Fanboard;
 import com.ctn.celebApp.entity.FeedBack;
 import com.ctn.celebApp.entity.FitnessRoutine;
+import com.ctn.celebApp.entity.Fixures;
+import com.ctn.celebApp.entity.LiveMatch;
 import com.ctn.celebApp.entity.MediaCaption;
 import com.ctn.celebApp.entity.MyDiet;
 import com.ctn.celebApp.entity.MyProfile;
@@ -44,33 +47,13 @@ public interface UserService {
 
 	public UserDetailsResponse loginWithGoogle(LoginWithGoogle loginWithGoogle);
 
-	public ResponseEntity<?> setProfilePic(Integer userId, MultipartFile file);
-
-	public StatusResponse setOtherProfilePic(Integer profilepicId);
-
 	public StatusResponse forgotPassword(EmailRequest emailRequest);
 
 	public ResponseEntity<?> NewsFeedLike(LikeRequest likeRequest);
 
-	public List<AboutMe> aboutme();
-
-	public List<MyProfile> myprofile();
-
-	public List<Fanboard> findAllFan();
-
-	public List<Collaboration> collaborations();
-
-	public List<FitnessRoutine> fitnessRoutine();
-
 	public List<MyDiet> myDiet();
-	
-	public List<FeedBack> findFeedback();
 
 	public List<Subscribe> subscribe();
-
-	public List<PostUrl> savePostUrl(PostUrlRequest postUrlRequest);
-
-	public List<PostVideos> saveVideo(VideoUrlRequest videoUrlRequest);
 
 	public List<MediaCaption> mediaCaption();
 
@@ -93,5 +76,11 @@ public interface UserService {
 	public ResponseEntity<?> getAllComment(Integer newsFeedId);
 
 	public UserQuizResponse saveQuizAnswer(QuizGameRequest request);
+
+	public String saveProfile(MultipartHttpServletRequest request, Integer userId);
+
+	public List<Fixures> findAllFixures();
+
+	public List<LiveMatch> findAllLiveMatch();
 
 }

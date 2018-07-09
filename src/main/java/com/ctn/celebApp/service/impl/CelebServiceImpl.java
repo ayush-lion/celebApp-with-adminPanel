@@ -22,6 +22,7 @@ import com.ctn.celebApp.celebresponse.CelebDetailsResponse;
 import com.ctn.celebApp.dao.CelebRepository;
 import com.ctn.celebApp.dao.EmployeRepository;
 import com.ctn.celebApp.dao.FitnessRoutineRepository;
+import com.ctn.celebApp.dao.LiveMatchRepository;
 import com.ctn.celebApp.dao.MediaCaptionRepository;
 import com.ctn.celebApp.dao.MyDietRepository;
 import com.ctn.celebApp.dao.NewsFeedRepo;
@@ -32,6 +33,7 @@ import com.ctn.celebApp.dao.TournamentRepository;
 import com.ctn.celebApp.entity.CelebDetails;
 import com.ctn.celebApp.entity.Employe;
 import com.ctn.celebApp.entity.FitnessRoutine;
+import com.ctn.celebApp.entity.LiveMatch;
 import com.ctn.celebApp.entity.MediaCaption;
 import com.ctn.celebApp.entity.MyDiet;
 import com.ctn.celebApp.entity.NewsFeed;
@@ -62,10 +64,10 @@ public class CelebServiceImpl implements CelebService {
 	TournamentRepository tournamentRepo;
 	
 	@Autowired
-	ProfilePicRepository profilePicRepo;
+	FitnessRoutineRepository fitnessRoutineRepo;
 	
 	@Autowired
-	FitnessRoutineRepository fitnessRoutineRepo;
+	LiveMatchRepository liveMatchRepo;
 	
 	@Autowired
 	StatsRepository statsRepo;
@@ -230,7 +232,7 @@ public class CelebServiceImpl implements CelebService {
 			String path = request.getServletContext().getRealPath("/");
 			String serverPath = new File(".").getCanonicalPath();
 			Properties prop = new Properties();
-			String savedLocation =System.getProperty("user.dir")+"/src/main/webapp/views/images/media_caption/";
+			String savedLocation =System.getProperty("user.dir")+"/src/main/webapp/views/images/tournament/";
 			Date date = new Date();
 			String name = date.getTime() + "NDA_" + "." + extension;
 			byte[] bytes = multiFile.getBytes();
@@ -240,7 +242,7 @@ public class CelebServiceImpl implements CelebService {
 			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
 			stream.write(bytes);
 			String contentType = multiFile.getContentType();
-			String url ="http://"+request.getServerName()+":"+request.getLocalPort()+"/views/images/media_caption/"+file.getName();
+			String url ="http://"+request.getServerName()+":"+request.getLocalPort()+"/views/images/tournament/"+file.getName();
 			Tournament tournament = new Tournament();
 			tournament.setTournamenttype(tournamenttype);
 			tournament.setUrl(url);
@@ -272,38 +274,6 @@ public class CelebServiceImpl implements CelebService {
 	stats.setBbf(request.getBbf());
 	statsRepo.save(stats);	
 	return "ok";
-	}
-
-	@Override
-	public String saveProfile(MultipartHttpServletRequest request, Integer userId) {
-		Iterator<String> itrator = request.getFileNames();
-		MultipartFile multiFile = request.getFile(itrator.next());
-		try {
-			String fileName = multiFile.getOriginalFilename();
-			String extension = multiFile.getOriginalFilename().split("\\.")[1];
-			String path = request.getServletContext().getRealPath("/");
-			String serverPath = new File(".").getCanonicalPath();
-			Properties prop = new Properties();
-			String savedLocation =System.getProperty("user.dir")+"/src/main/webapp/views/images/Profile_Pic/";
-			Date date = new Date();
-			String name = date.getTime() + "NDA_" + "." + extension;
-			byte[] bytes = multiFile.getBytes();
-			File directory = new File(savedLocation);
-			directory.mkdirs();
-			File file = new File(directory.getAbsolutePath() + System.getProperty("file.separator") + name);		
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
-			stream.write(bytes);
-			String contentType = multiFile.getContentType();
-			String url ="http://"+request.getServerName()+":"+request.getLocalPort()+"/views/images/Profile_Pic/"+file.getName();
-			ProfilePic profilePic = new ProfilePic();
-			profilePic.setUserId(userId);
-			profilePic.setProfilePic(url);
-			profilePicRepo.save(profilePic);
-			stream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return "ok";	
 	}
 
 	@Override
@@ -340,7 +310,6 @@ public class CelebServiceImpl implements CelebService {
 
 	@Override
 	public String dietSave(MultipartHttpServletRequest request, String content) {
-		
 		Iterator<String> itrator = request.getFileNames();
 		MultipartFile multiFile = request.getFile(itrator.next());
 		try {
@@ -370,18 +339,57 @@ public class CelebServiceImpl implements CelebService {
 		}
 		return "ok";
 	}
+	
+	@Override
+	public String liveMatch(MultipartHttpServletRequest request) {
+		Iterator<String> itrator = request.getFileNames();
+		LiveMatch liveMatch = new LiveMatch();
+		boolean isfirst=false;
+		while(itrator.hasNext()) {
+		MultipartFile multiFile = request.getFile(itrator.next());
+		try {
+			String fileName = multiFile.getOriginalFilename();
+			String extension = multiFile.getOriginalFilename().split("\\.")[1];
+			String path = request.getServletContext().getRealPath("/");
+			String serverPath = new File(".").getCanonicalPath();
+			Properties prop = new Properties();
+			String savedLocation =System.getProperty("user.dir")+"/src/main/webapp/views/images/liveMatch/";
+			Date date = new Date();
+			String name = date.getTime() + "NDA_" + "." + extension;
+			byte[] bytes = multiFile.getBytes();
+			File directory = new File(savedLocation);
+			directory.mkdirs();
+			File file = new File(directory.getAbsolutePath() + System.getProperty("file.separator") + name);		
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+			stream.write(bytes);
+			String contentType = multiFile.getContentType();
+			String url ="http://"+request.getServerName()+":"+request.getLocalPort()+"/views/images/liveMatch/"+file.getName();
+			if(!isfirst) {
+				liveMatch.setFirstTeam(url);
+				isfirst =true;
+				}else {
+					liveMatch.setSecondTeam(url);
+				}
+			
+			stream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+		liveMatchRepo.save(liveMatch);
+		return "ok";
+	}
 
 	@Override
 	public String quizSave(QuizRequest request) {
-		
-		Quizgame quizgame = new Quizgame();
+		final Quizgame quizgame = new Quizgame();
 		quizgame.setQuiz(request.getQuiz());
 		quizgame.setOptiona(request.getOptiona());
+		quizgame.setOptionb(request.getOptionb());
 		quizgame.setOptionc(request.getOptionc());
 		quizgame.setOptiond(request.getOptiond());
 		quizgame.setRight(request.getRight());
 		quizRepo.save(quizgame);
-		
 	return "ok";
 	}
 }

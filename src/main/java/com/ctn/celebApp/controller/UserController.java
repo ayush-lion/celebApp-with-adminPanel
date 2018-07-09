@@ -10,20 +10,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.ctn.celebApp.entity.AboutMe;
 import com.ctn.celebApp.entity.Collaboration;
 import com.ctn.celebApp.entity.Fanboard;
 import com.ctn.celebApp.entity.FeedBack;
 import com.ctn.celebApp.entity.FitnessRoutine;
+import com.ctn.celebApp.entity.Fixures;
+import com.ctn.celebApp.entity.LiveMatch;
 import com.ctn.celebApp.entity.MediaCaption;
 import com.ctn.celebApp.entity.MyDiet;
 import com.ctn.celebApp.entity.MyProfile;
-import com.ctn.celebApp.entity.PostUrl;
-import com.ctn.celebApp.entity.PostVideos;
 import com.ctn.celebApp.entity.Quizgame;
 import com.ctn.celebApp.entity.Stats;
 import com.ctn.celebApp.entity.Subscribe;
@@ -34,12 +33,10 @@ import com.ctn.celebApp.userrequest.EmailRequest;
 import com.ctn.celebApp.userrequest.LikeRequest;
 import com.ctn.celebApp.userrequest.LoginWithFacebookRequest;
 import com.ctn.celebApp.userrequest.LoginWithGoogle;
-import com.ctn.celebApp.userrequest.PostUrlRequest;
 import com.ctn.celebApp.userrequest.QuizGameRequest;
 import com.ctn.celebApp.userrequest.UserCommentRequest;
 import com.ctn.celebApp.userrequest.UserCreateRequest;
 import com.ctn.celebApp.userrequest.UserLoginRequest;
-import com.ctn.celebApp.userrequest.VideoUrlRequest;
 import com.ctn.celebApp.userresponse.StatusResponse;
 import com.ctn.celebApp.userresponse.UserDetailsResponse;
 import com.ctn.celebApp.userresponse.UserQuizResponse;
@@ -156,62 +153,6 @@ public class UserController {
 	return 	stat;
 	}
 	
-	/**************************************** Aboutme Celebrity *******************************************************/
-	
-	@RequestMapping(value = "/aboutme",produces = "application/json",method = RequestMethod.GET)
-	public List<AboutMe> aboutme() {
-		
-	return userService.aboutme();
-	}
-	
-	/****************************************  MyProfile  *******************************************************/
-	
-	@RequestMapping(value = "/myprofile",produces = "application/json",method = RequestMethod.GET)
-	public List<MyProfile> myprofile() {
-			
-	return userService.myprofile();
-	}
-	
-	/***************************************** Feedback *********************************************************/
-	@RequestMapping(value = "/feedback" , produces = "application/json", method = RequestMethod.GET)
-	public List<FeedBack> findFeedback(){
-	
-	return userService.findFeedback();	
-	}
-	
-		
-	/***************************************** Fanboard *********************************************************/
-		
-	@RequestMapping(value = "/fanboard" , produces = "application/json",method = RequestMethod.GET)
-	public List<Fanboard> findAllFan(){
-			
-	return userService.findAllFan();
-	}
-		
-	/***************************************** Collaboration *********************************************************/
-		
-	@RequestMapping(value = "/collaborations" , produces = "application/json",method = RequestMethod.GET)
-	public List<Collaboration> collaborations(){
-			
-	return userService.collaborations();
-	}
-		
-	/****************************************** FitnessRoutine ****************************************************/
-		
-	@RequestMapping(value = "/fitnessroutine", produces = "application/json", method = RequestMethod.GET)
-	public List<FitnessRoutine> fitnessRoutine(){
-			
-	return userService.fitnessRoutine();
-	}
-		
-	/****************************************** Subscribe **************************************************/
-		
-	@RequestMapping(value = "/subscribe", produces = "application/json", method = RequestMethod.GET)
-	public List<Subscribe> subscribe(){
-			
-	return userService.subscribe();
-	}
-	
 	/******************************************** News Feed Like ********************************************/
 	
 	@RequestMapping(value="/NewsFeedLike", method=RequestMethod.POST)
@@ -252,35 +193,26 @@ public class UserController {
 	return userService.forgotPassword(emailRequest);
 	}
 	
-	/*************************************** save Post Link *************************************************/
-	
-	@RequestMapping(value = "/savepost" , produces = "application/json", method = RequestMethod.POST)
-	public List<PostUrl> savePostUrl(@RequestBody PostUrlRequest postUrlRequest){
-	
-	return (List<PostUrl>) userService.savePostUrl(postUrlRequest);	
-	}
-	
-	/*************************************** save youtube videos ******************************************/
-	
-	@RequestMapping(value = "saveyoutube", produces = "application/json" , method = RequestMethod.POST)
-	public List<PostVideos> saveVideo(@RequestBody VideoUrlRequest videoUrlRequest ){
-		
-	return (List<PostVideos>) userService.saveVideo(videoUrlRequest);			
-	}
-	
 	/**************************************** set Profile pic ******************************************/
 	
 	@RequestMapping(value="/setProfilePic", method=RequestMethod.POST)
-	public ResponseEntity<?> uploadProfilePic(@RequestParam("userId") Integer userId, @RequestParam("file") MultipartFile file){
+	public String saveProfile(MultipartHttpServletRequest request,Integer userId){
 
-	return userService.setProfilePic(userId,file);
+	return userService.saveProfile(request,userId);
 	}
-
-	/**************************************** Set/Edit Other Profile Pic **************************************/
 	
-	@RequestMapping(value = "/setOtherProfilePic/{profilePicId}", method = RequestMethod.PUT)
-	public StatusResponse setOtherProfilePic(@PathVariable("profilePicId") Integer profilepicId) {
+	/***************************************** Fixures ***************************************************/
+	
+	@RequestMapping(value="/fixures", method=RequestMethod.GET)
+	public List<Fixures> findAllFixures(){
 		
-	return userService.setOtherProfilePic(profilepicId);
+	return userService.findAllFixures();			
+	}
+	
+	/**************************************** LiveMatch *************************************************/
+	@RequestMapping(value="/liveMatch",method=RequestMethod.GET)
+	public List<LiveMatch> findAllLiveMatch(){
+		
+	return userService.findAllLiveMatch();	
 	}
 }
