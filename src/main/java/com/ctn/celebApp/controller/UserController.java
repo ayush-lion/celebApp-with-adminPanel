@@ -13,19 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.ctn.celebApp.entity.AboutMe;
-import com.ctn.celebApp.entity.Collaboration;
-import com.ctn.celebApp.entity.Fanboard;
-import com.ctn.celebApp.entity.FeedBack;
 import com.ctn.celebApp.entity.FitnessRoutine;
 import com.ctn.celebApp.entity.Fixures;
 import com.ctn.celebApp.entity.LiveMatch;
 import com.ctn.celebApp.entity.MediaCaption;
 import com.ctn.celebApp.entity.MyDiet;
-import com.ctn.celebApp.entity.MyProfile;
-import com.ctn.celebApp.entity.Quizgame;
+import com.ctn.celebApp.entity.ProfilePic;
+import com.ctn.celebApp.entity.QuizQuestion;
 import com.ctn.celebApp.entity.Stats;
-import com.ctn.celebApp.entity.Subscribe;
 import com.ctn.celebApp.entity.Tournament;
 import com.ctn.celebApp.entity.VideoUrl;
 import com.ctn.celebApp.service.UserService;
@@ -88,12 +83,11 @@ public class UserController {
 	return userService.saveQuizAnswer(request);	
 	}
 	
-	/**************************************** Quiz ******************************************************/
-	
-	@RequestMapping(value="/quiz", produces = "application/json", method = RequestMethod.GET)
-	public List <Quizgame> findquiz(){
+	/**************************************** QuizQuestion ******************************************************/
+	@RequestMapping(value = "/quizQuestion", produces = "application/json", method = RequestMethod.GET)
+	public List<QuizQuestion> getQuizQuestion(){
 		
-	return userService.findquiz();	
+	return userService.getQuizQuestion();	
 	}
 	
 	/****************************************** MediaCaption **********************************************/
@@ -118,6 +112,8 @@ public class UserController {
 			
 	return userService.myDiet();
 	}
+	
+	/****************************************** youtube ****************************************************/
 	
 	@RequestMapping(value = "/youtube", produces = "application/json", method = RequestMethod.GET)
 	public List<VideoUrl> findVideoUrl(){
@@ -152,6 +148,24 @@ public class UserController {
 	}
 	return 	stat;
 	}
+	
+    /***************************************** get Profile Pic ******************************************/
+	
+	@RequestMapping(value="/getProfilePic/{userId}", method = RequestMethod.GET)
+	public List<ProfilePic> getProfilePic(@PathVariable Integer userId) {
+	List<ProfilePic> result = new ArrayList<>();
+	List<ProfilePic> pro = userService.getProfilePic();
+	for (ProfilePic profilePic : pro) {
+		if(profilePic.getUserId()==userId) {
+			result.add(profilePic);
+		}
+		else
+		if(profilePic.getUserId() != userId) {
+			
+		}
+	}
+	return 	result;
+	}	
 	
 	/******************************************** News Feed Like ********************************************/
 	

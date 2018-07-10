@@ -1,6 +1,5 @@
 package com.ctn.celebApp.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,10 +13,8 @@ public class NewsFeed {
 	@Id
 	@GeneratedValue
 	
-	@Column(name="newsFeedId")
 	private Integer newsFeedId;
 	
-	@Column(name="newsFeedUrl")
 	private String newsFeedUrl;
 
 	public Integer getNewsFeedId() {

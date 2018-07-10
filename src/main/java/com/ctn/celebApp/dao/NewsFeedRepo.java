@@ -5,4 +5,6 @@ import com.ctn.celebApp.entity.NewsFeed;
 
 public interface NewsFeedRepo extends JpaRepository<NewsFeed,String> {
 
+	NewsFeed findByNewsFeedId(Integer newsFeedId);
+
 }

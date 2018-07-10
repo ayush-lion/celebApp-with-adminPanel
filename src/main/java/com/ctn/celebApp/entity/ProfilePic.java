@@ -3,12 +3,11 @@ package com.ctn.celebApp.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
+import org.springframework.stereotype.Component;
 
-@Entity
-@Table(name = "profilepicdetails")
-
+@Component
+@Entity(name = "profilepicdetails")
 public class ProfilePic {
 
 		@Id

@@ -8,17 +8,15 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import com.ctn.celebApp.dao.AboutMeRepository;
+
 import com.ctn.celebApp.dao.CelebRepository;
-import com.ctn.celebApp.dao.CollaborationRepository;
-import com.ctn.celebApp.dao.FanBoardRepository;
-import com.ctn.celebApp.dao.FeedBackRepository;
 import com.ctn.celebApp.dao.FitnessRoutineRepository;
 import com.ctn.celebApp.dao.FixuresRepository;
 import com.ctn.celebApp.dao.LikeStatusAllFeedRepository;
@@ -31,31 +29,23 @@ import com.ctn.celebApp.dao.PostUrlRepo;
 import com.ctn.celebApp.dao.PostVideoRepo;
 import com.ctn.celebApp.dao.ProfilePicRepository;
 import com.ctn.celebApp.dao.QuizAnswerRepository;
-import com.ctn.celebApp.dao.QuizRepository;
+import com.ctn.celebApp.dao.QuizQuestionRepository;
 import com.ctn.celebApp.dao.StatsRepository;
 import com.ctn.celebApp.dao.SubscribeRepository;
 import com.ctn.celebApp.dao.TournamentRepository;
 import com.ctn.celebApp.dao.UserCommentRepository;
 import com.ctn.celebApp.dao.UserRepository;
 import com.ctn.celebApp.dao.VideoUrlRepository;
-import com.ctn.celebApp.entity.AboutMe;
-import com.ctn.celebApp.entity.CelebDetails;
-import com.ctn.celebApp.entity.Collaboration;
-import com.ctn.celebApp.entity.Fanboard;
-import com.ctn.celebApp.entity.FeedBack;
 import com.ctn.celebApp.entity.FitnessRoutine;
 import com.ctn.celebApp.entity.Fixures;
 import com.ctn.celebApp.entity.LiveMatch;
 import com.ctn.celebApp.entity.MediaCaption;
 import com.ctn.celebApp.entity.MyDiet;
-import com.ctn.celebApp.entity.MyProfile;
 import com.ctn.celebApp.entity.NewsFeed;
 import com.ctn.celebApp.entity.NewsFeedLikeDetails;
-import com.ctn.celebApp.entity.PostUrl;
-import com.ctn.celebApp.entity.PostVideos;
 import com.ctn.celebApp.entity.ProfilePic;
 import com.ctn.celebApp.entity.QuizAnswer;
-import com.ctn.celebApp.entity.Quizgame;
+import com.ctn.celebApp.entity.QuizQuestion;
 import com.ctn.celebApp.entity.Stats;
 import com.ctn.celebApp.entity.Subscribe;
 import com.ctn.celebApp.entity.Tournament;
@@ -70,12 +60,10 @@ import com.ctn.celebApp.userrequest.EmailRequest;
 import com.ctn.celebApp.userrequest.LikeRequest;
 import com.ctn.celebApp.userrequest.LoginWithFacebookRequest;
 import com.ctn.celebApp.userrequest.LoginWithGoogle;
-import com.ctn.celebApp.userrequest.PostUrlRequest;
 import com.ctn.celebApp.userrequest.QuizGameRequest;
 import com.ctn.celebApp.userrequest.UserCommentRequest;
 import com.ctn.celebApp.userrequest.UserCreateRequest;
 import com.ctn.celebApp.userrequest.UserLoginRequest;
-import com.ctn.celebApp.userrequest.VideoUrlRequest;
 import com.ctn.celebApp.userresponse.LikeResponse;
 import com.ctn.celebApp.userresponse.NewsFeedResponse;
 import com.ctn.celebApp.userresponse.StatusResponse;
@@ -111,20 +99,11 @@ public class UserServiceImpl implements UserService {
 	NewsFeedLikeRepository newsFeedLikeRepo;
 
 	@Autowired
-	AboutMeRepository aboutMeRepo;
-	
-	@Autowired
 	UserCommentRepository userCommentRepo;
 	
 	@Autowired
 	MediaCaptionRepository mediaCaptionRepo;
 	
-	@Autowired
-	FeedBackRepository feedBackRepo;
-
-	@Autowired
-	FanBoardRepository fanBoardRepo;
-
 	@Autowired
 	SubscribeRepository subscribeRepo;
 	
@@ -133,9 +112,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	FitnessRoutineRepository fitnessRoutineRepo;
-
-	@Autowired
-	CollaborationRepository collaborationRepo;
 	
 	@Autowired
 	NewsFeedRepo newsFeedRepo;
@@ -148,18 +124,18 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	FixuresRepository fixureRepo;
-
-	@Autowired
-	MyDietRepository myDietRepo;
 	
 	@Autowired
-	QuizRepository quizRepo;
+	MyDietRepository myDietRepo;
 	
 	@Autowired
 	VideoUrlRepository videourlRepo;
 	
 	@Autowired
 	LikeStatusAllFeedRepository likeStatusAllFeedRepo;
+	
+	@Autowired
+	QuizQuestionRepository quizQuestionRepo;
 	
 	@Autowired
 	QuizAnswerRepository quizAnswerRepo;
@@ -492,12 +468,6 @@ public class UserServiceImpl implements UserService {
 		
 	return (List<VideoUrl>) videourlRepo.findAll();
 	}
-
-	@Override
-	public List<Quizgame> findquiz() {
-		
-	return (List<Quizgame>) quizRepo.findAll() ;
-	}
 	
 	@Override
 	public String saveProfile(MultipartHttpServletRequest request, Integer userId) {
@@ -555,5 +525,17 @@ public class UserServiceImpl implements UserService {
 	public List<LiveMatch> findAllLiveMatch() {
 		
 	return (List<LiveMatch>)livematchRepo.findAll();
+	}
+
+	@Override
+	public List<ProfilePic> getProfilePic() {
+		
+	return (List<ProfilePic>) profilePicRepo.findAll();
+	}
+
+	@Override
+	public List<QuizQuestion> getQuizQuestion() {
+		
+	return (List<QuizQuestion>) quizQuestionRepo.findAll();
 	}
 }

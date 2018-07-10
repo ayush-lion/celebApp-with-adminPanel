@@ -8,12 +8,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import com.ctn.celebApp.celebrequest.CelebCreateRequest;
 import com.ctn.celebApp.celebrequest.EmployeSubmitRequest;
 import com.ctn.celebApp.celebrequest.QuizRequest;
@@ -26,8 +24,6 @@ import com.ctn.celebApp.dao.LiveMatchRepository;
 import com.ctn.celebApp.dao.MediaCaptionRepository;
 import com.ctn.celebApp.dao.MyDietRepository;
 import com.ctn.celebApp.dao.NewsFeedRepo;
-import com.ctn.celebApp.dao.ProfilePicRepository;
-import com.ctn.celebApp.dao.QuizRepository;
 import com.ctn.celebApp.dao.StatsRepository;
 import com.ctn.celebApp.dao.TournamentRepository;
 import com.ctn.celebApp.entity.CelebDetails;
@@ -37,8 +33,6 @@ import com.ctn.celebApp.entity.LiveMatch;
 import com.ctn.celebApp.entity.MediaCaption;
 import com.ctn.celebApp.entity.MyDiet;
 import com.ctn.celebApp.entity.NewsFeed;
-import com.ctn.celebApp.entity.ProfilePic;
-import com.ctn.celebApp.entity.Quizgame;
 import com.ctn.celebApp.entity.Stats;
 import com.ctn.celebApp.entity.Tournament;
 import com.ctn.celebApp.enums.Status;
@@ -71,9 +65,6 @@ public class CelebServiceImpl implements CelebService {
 	
 	@Autowired
 	StatsRepository statsRepo;
-	
-	@Autowired
-	QuizRepository quizRepo;
 	
 	@Autowired
 	MyDietRepository myDietRepo;
@@ -382,14 +373,7 @@ public class CelebServiceImpl implements CelebService {
 
 	@Override
 	public String quizSave(QuizRequest request) {
-		final Quizgame quizgame = new Quizgame();
-		quizgame.setQuiz(request.getQuiz());
-		quizgame.setOptiona(request.getOptiona());
-		quizgame.setOptionb(request.getOptionb());
-		quizgame.setOptionc(request.getOptionc());
-		quizgame.setOptiond(request.getOptiond());
-		quizgame.setRight(request.getRight());
-		quizRepo.save(quizgame);
+		
 	return "ok";
 	}
 }

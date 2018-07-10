@@ -17,6 +17,14 @@ public class Fixures {
 	
 	private String fixures;
 	
+	private String timestamp;
+	
+	private String stadium;
+	
+	private String year;
+	
+	private String format;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -32,4 +40,36 @@ public class Fixures {
 	public void setFixures(String fixures) {
 		this.fixures = fixures;
 	}
+
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public String getStadium() {
+		return stadium;
+	}
+
+	public void setStadium(String stadium) {
+		this.stadium = stadium;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}	
 }
